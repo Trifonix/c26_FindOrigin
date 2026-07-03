@@ -8,11 +8,10 @@ describe("formatAIError", () => {
     expect(msg).toContain("Billing");
   });
 
-  it("explains OpenRouter insufficient credits", () => {
+  it("explains unavailable free model", () => {
     const msg = formatAIError(
-      new Error("402 Insufficient credits. This account never purchased credits."),
+      new Error("404 No endpoints found for google/gemma-2-9b-it:free."),
     );
-    expect(msg).toContain("кредитов");
-    expect(msg).toContain("openrouter.ai/settings/credits");
+    expect(msg).toContain("openrouter/free");
   });
 });
