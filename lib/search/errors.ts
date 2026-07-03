@@ -5,6 +5,24 @@ export function formatSearchError(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   const lower = message.toLowerCase();
 
+  if (
+    lower.includes("does not have the access") ||
+    lower.includes("access to custom search json api")
+  ) {
+    return [
+      "Проект Google Cloud не имеет доступа к Custom Search JSON API.",
+      "",
+      "Проверьте по порядку:",
+      "1. Проект «findallorigin» → APIs & Services → Library → «Custom Search API» → Enable",
+      "2. Billing → привязать платёжный аккаунт к этому проекту",
+      "3. API-ключ создан в том же проекте, где включён API",
+      "4. Credentials → ключ → Application restrictions = None",
+      "5. programmablesearchengine.google.com → FindOrigin → включить «Поиск во всём интернете»",
+      "",
+      `Ссылка: ${GOOGLE_ENABLE_URL}`,
+    ].join("\n");
+  }
+
   if (lower.includes("has not been used") || lower.includes("it is disabled")) {
     return [
       "Google Custom Search API не включён в вашем проекте Google Cloud.",
