@@ -5,6 +5,20 @@ export function formatSearchError(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   const lower = message.toLowerCase();
 
+  if (lower.includes("search not configured") || lower.includes("serper_api_key")) {
+    return [
+      "Поиск не настроен.",
+      "",
+      "Google отключил «Поиск во всём интернете» в Programmable Search Engine.",
+      "Используйте Serper — это Google-поиск через API:",
+      "",
+      "1. Зарегистрируйтесь на serper.dev",
+      "2. Скопируйте API key",
+      "3. Добавьте SERPER_API_KEY в Vercel Environment Variables",
+      "4. Redeploy",
+    ].join("\n");
+  }
+
   if (
     lower.includes("does not have the access") ||
     lower.includes("access to custom search json api")
@@ -18,6 +32,9 @@ export function formatSearchError(error: unknown): string {
       "3. API-ключ создан в том же проекте, где включён API",
       "4. Credentials → ключ → Application restrictions = None",
       "5. programmablesearchengine.google.com → FindOrigin → включить «Поиск во всём интернете»",
+      "",
+      "⚠️ Google отключил эту функцию для новых аккаунтов.",
+      "Используйте Serper (serper.dev) — добавьте SERPER_API_KEY в Vercel.",
       "",
       `Ссылка: ${GOOGLE_ENABLE_URL}`,
     ].join("\n");

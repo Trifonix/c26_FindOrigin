@@ -2,7 +2,7 @@ import { rankSources } from "@/lib/ai/rank-sources";
 import { parseInput } from "@/lib/parser/input";
 import { formatSourcesResponse, splitMessage } from "@/lib/pipeline/format-response";
 import { formatSearchError } from "@/lib/search/errors";
-import { searchSources } from "@/lib/search/google";
+import { searchSources } from "@/lib/search";
 import { sendMessage } from "@/lib/telegram/client";
 import type { NormalizedInput } from "@/lib/types";
 import type { RankedSource } from "@/lib/types/search";

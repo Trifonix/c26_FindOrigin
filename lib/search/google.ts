@@ -1,7 +1,6 @@
-import { categorizeUrl, filterCandidates } from "@/lib/search/filter";
-import { buildSearchQueries } from "@/lib/search/queries";
+import { categorizeUrl } from "@/lib/search/filter";
 import { formatSearchError } from "@/lib/search/errors";
-import type { SearchCandidate, SourceSearchResult } from "@/lib/types/search";
+import type { SearchCandidate } from "@/lib/types/search";
 
 interface GoogleSearchItem {
   title?: string;
@@ -56,15 +55,6 @@ async function googleSearch(query: string, num = 10): Promise<SearchCandidate[]>
       snippet: item.snippet ?? "",
       category: categorizeUrl(item.link!),
     }));
-}
-
-export async function searchSources(text: string): Promise<SourceSearchResult> {
-  const queries = buildSearchQueries(text);
-  const batches = await Promise.all(queries.map((q) => googleSearch(q, 10)));
-
-  const candidates = filterCandidates(batches.flat(), 12);
-
-  return { candidates, queries };
 }
 
 export { googleSearch, getGoogleConfig };
