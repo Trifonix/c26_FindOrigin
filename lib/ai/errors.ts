@@ -40,6 +40,10 @@ export function formatAIError(error: unknown): string {
     ].join("\n");
   }
 
+  if (lower.includes("unexpected token") || lower.includes("is not valid json")) {
+    return "AI вернул некорректный JSON. Попробуйте отправить запрос ещё раз.";
+  }
+
   if (lower.includes("no endpoints found") || (lower.includes("404") && lower.includes("endpoint"))) {
     return [
       "Модель AI недоступна на OpenRouter (404).",

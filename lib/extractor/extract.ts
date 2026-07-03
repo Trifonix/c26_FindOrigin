@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { getAIClient } from "@/lib/ai/client";
 import { getAIModel } from "@/lib/ai/errors";
+import { parseAIJson } from "@/lib/ai/parse-json";
 import type { ExtractedData } from "@/lib/types";
 
 const extractedSchema = z.object({
@@ -54,7 +55,7 @@ export async function extractEntities(text: string): Promise<ExtractedData> {
     throw new Error("Empty response from OpenAI");
   }
 
-  const parsed = extractedSchema.parse(JSON.parse(content));
+  const parsed = extractedSchema.parse(parseAIJson(content));
   const textLinks = extractLinksFromText(text);
 
   return {

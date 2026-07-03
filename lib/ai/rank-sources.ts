@@ -2,6 +2,7 @@ import { z } from "zod";
 import { getAIClient } from "@/lib/ai/client";
 import { getAIModel } from "@/lib/ai/errors";
 import { fetchCandidatesContent } from "@/lib/ai/fetch-content";
+import { parseAIJson } from "@/lib/ai/parse-json";
 import type { RankedSource, SearchCandidate } from "@/lib/types/search";
 
 const rankingSchema = z.object({
@@ -22,6 +23,7 @@ Compare the MEANING of the user's text with candidate pages — not literal word
 Pick 1-3 best sources that likely originated or first published this information.
 Assign confidence 0-100 for each.
 Respond in the same language as the user's text.
+Return ONLY valid JSON, no markdown, no code fences.
 Return JSON: { "sources": [{ "url", "confidence", "reasoning" }], "noReliableSource": boolean }
 If none are reliable (confidence below 40), set noReliableSource to true and return empty sources.`;
 
@@ -64,7 +66,7 @@ Content excerpt: ${content.slice(0, 1500)}`;
     throw new Error("Empty AI ranking response");
   }
 
-  const parsed = rankingSchema.parse(JSON.parse(raw));
+  const parsed = rankingSchema.parse(parseAIJson(raw));
 
   if (parsed.noReliableSource || parsed.sources.length === 0) {
     return [];
