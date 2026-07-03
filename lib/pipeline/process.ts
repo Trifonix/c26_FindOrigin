@@ -1,54 +1,14 @@
-import { extractEntities } from "@/lib/extractor/extract";
+import { rankSources } from "@/lib/ai/rank-sources";
 import { parseInput } from "@/lib/parser/input";
+import { formatSourcesResponse, splitMessage } from "@/lib/pipeline/format-response";
+import { searchSources } from "@/lib/search/google";
 import { sendMessage } from "@/lib/telegram/client";
-import type { ExtractedData, NormalizedInput } from "@/lib/types";
+import type { NormalizedInput } from "@/lib/types";
+import type { RankedSource } from "@/lib/types/search";
 
 export interface ProcessResult {
   input: NormalizedInput;
-  extracted: ExtractedData;
-}
-
-function formatExtractedPreview(extracted: ExtractedData): string {
-  const lines: string[] = ["<b>Извлечённые данные:</b>", ""];
-
-  lines.push(`<b>Резюме:</b> ${escapeHtml(extracted.summary)}`);
-  lines.push("");
-
-  if (extracted.claims.length > 0) {
-    lines.push("<b>Ключевые утверждения:</b>");
-    extracted.claims.forEach((claim, i) => {
-      lines.push(`${i + 1}. ${escapeHtml(claim)}`);
-    });
-    lines.push("");
-  }
-
-  if (extracted.dates.length > 0) {
-    lines.push(`<b>Даты:</b> ${extracted.dates.map(escapeHtml).join(", ")}`);
-  }
-
-  if (extracted.numbers.length > 0) {
-    lines.push(`<b>Числа:</b> ${extracted.numbers.map(escapeHtml).join(", ")}`);
-  }
-
-  if (extracted.names.length > 0) {
-    lines.push(`<b>Имена:</b> ${extracted.names.map(escapeHtml).join(", ")}`);
-  }
-
-  if (extracted.links.length > 0) {
-    lines.push(`<b>Ссылки в тексте:</b> ${extracted.links.map(escapeHtml).join(", ")}`);
-  }
-
-  lines.push("");
-  lines.push("<i>Поиск источников будет добавлен на следующем этапе.</i>");
-
-  return lines.join("\n");
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  sources: RankedSource[];
 }
 
 export async function processUserMessage(chatId: number, rawText: string): Promise<void> {
@@ -60,15 +20,32 @@ export async function processUserMessage(chatId: number, rawText: string): Promi
   }
 
   try {
-    const extracted = await extractEntities(parsed.data.text);
-    const preview = formatExtractedPreview(extracted);
+    const { candidates } = await searchSources(parsed.data.text);
 
-    await sendMessage(chatId, preview, { parse_mode: "HTML" });
+    if (candidates.length === 0) {
+      await sendMessage(
+        chatId,
+        "Поиск не дал результатов. Попробуйте переформулировать запрос или добавить детали.",
+      );
+      return;
+    }
+
+    const sources = await rankSources(parsed.data.text, candidates);
+    const message = formatSourcesResponse(parsed.data.text, sources);
+    const parts = splitMessage(message);
+
+    for (const part of parts) {
+      await sendMessage(chatId, part, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+      });
+    }
 
     console.log("Processed message", {
       chatId,
       inputType: parsed.data.type,
-      claimsCount: extracted.claims.length,
+      candidates: candidates.length,
+      sourcesFound: sources.length,
     });
   } catch (error) {
     console.error("Processing failed:", error);
@@ -85,12 +62,11 @@ export async function runPipeline(rawText: string): Promise<ProcessResult> {
     throw new Error(parsed.error);
   }
 
-  const extracted = await extractEntities(parsed.data.text);
+  const { candidates } = await searchSources(parsed.data.text);
+  const sources = await rankSources(parsed.data.text, candidates);
 
   return {
     input: parsed.data,
-    extracted,
+    sources,
   };
 }
-
-export { formatExtractedPreview };

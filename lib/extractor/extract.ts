@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { z } from "zod";
+import { AI_MODEL, getAIClient } from "@/lib/ai/client";
 import type { ExtractedData } from "@/lib/types";
 
 const extractedSchema = z.object({
@@ -23,11 +24,7 @@ Return JSON with:
 Respond in the same language as the input text.`;
 
 function getOpenAIClient(): OpenAI {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not configured");
-  }
-  return new OpenAI({ apiKey });
+  return getAIClient();
 }
 
 function extractLinksFromText(text: string): string[] {
@@ -39,7 +36,7 @@ export async function extractEntities(text: string): Promise<ExtractedData> {
   const client = getOpenAIClient();
 
   const response = await client.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: AI_MODEL,
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },

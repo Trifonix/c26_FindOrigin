@@ -1,2 +1,3 @@
-// Placeholder for stage 6 — AI source comparison
-export {};
+export { getAIClient, AI_MODEL } from "@/lib/ai/client";
+export { rankSources, rankingSchema } from "@/lib/ai/rank-sources";
+export { fetchPageContent, fetchCandidatesContent } from "@/lib/ai/fetch-content";
