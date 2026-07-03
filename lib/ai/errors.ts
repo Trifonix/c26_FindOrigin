@@ -1,8 +1,16 @@
+const DEFAULT_OPENROUTER_MODEL = "google/gemma-2-9b-it:free";
+const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
+
 export function getAIModel(): string {
-  if (process.env.OPENROUTER_API_KEY || process.env.OPENAI_BASE_URL?.includes("openrouter")) {
-    return "openai/gpt-4o-mini";
+  if (process.env.AI_MODEL) {
+    return process.env.AI_MODEL;
   }
-  return "gpt-4o-mini";
+
+  if (process.env.OPENROUTER_API_KEY || process.env.OPENAI_BASE_URL?.includes("openrouter")) {
+    return DEFAULT_OPENROUTER_MODEL;
+  }
+
+  return DEFAULT_OPENAI_MODEL;
 }
 
 export function formatAIError(error: unknown): string {
@@ -33,14 +41,16 @@ export function formatAIError(error: unknown): string {
 
   if (lower.includes("402") || lower.includes("insufficient credits")) {
     return [
-      "Недостаточно кредитов на OpenRouter для AI-анализа.",
+      "Недостаточно кредитов на OpenRouter.",
       "",
-      "Варианты:",
-      "1. Пополнить баланс: openrouter.ai/settings/credits",
-      "2. Или использовать прямой OpenAI API:",
-      "   — удалите OPENROUTER_API_KEY и OPENAI_BASE_URL на Vercel",
-      "   — добавьте OPENAI_API_KEY от platform.openai.com",
-      "   — Redeploy",
+      "Причина: модель openai/gpt-4o-mini — платная.",
+      "Бесплатные модели на OpenRouter имеют суффикс :free, например:",
+      "  google/gemma-2-9b-it:free",
+      "  meta-llama/llama-3.1-8b-instruct:free",
+      "",
+      "Что сделать (выберите одно):",
+      "1. На Vercel добавить AI_MODEL=google/gemma-2-9b-it:free",
+      "2. Или пополнить баланс: openrouter.ai/settings/credits",
     ].join("\n");
   }
 
