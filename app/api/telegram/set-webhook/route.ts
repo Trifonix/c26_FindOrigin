@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   }
 
   const webhookUrl =
-    process.env.WEBHOOK_URL ?? `${request.nextUrl.origin}/api/telegram/webhook`;
+    process.env.WEBHOOK_URL ?? `${request.nextUrl.origin}/api/webhook`;
 
   try {
     const result = await setWebhook(webhookUrl, process.env.TELEGRAM_WEBHOOK_SECRET);

@@ -6,7 +6,7 @@ export default function Home() {
         Telegram-бот для поиска источников информации.
       </p>
       <p className="mt-2 text-sm text-gray-400">
-        Webhook: <code>/api/telegram/webhook</code>
+        Webhook: <code>/api/webhook</code>
       </p>
     </main>
   );
