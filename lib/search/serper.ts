@@ -36,7 +36,8 @@ export async function serperSearch(query: string, num = 10): Promise<SearchCandi
   const data = (await response.json()) as SerperResponse;
 
   if (!response.ok) {
-    throw new Error(data.message ?? `Serper API error: ${response.status}`);
+    const detail = data.message ?? `HTTP ${response.status}`;
+    throw new Error(`Serper: ${detail}`);
   }
 
   return (data.organic ?? [])

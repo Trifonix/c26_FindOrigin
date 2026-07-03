@@ -18,5 +18,5 @@ export function buildSearchQueries(text: string): string[] {
     }
   }
 
-  return [...queries].slice(0, 3);
+  return [...queries].slice(0, 1);
 }

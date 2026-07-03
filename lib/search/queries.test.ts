@@ -7,12 +7,12 @@ describe("buildSearchQueries", () => {
     expect(buildSearchQueries(text)).toEqual([text]);
   });
 
-  it("creates multiple queries for long text", () => {
+  it("creates single query for long text", () => {
     const text =
       "По данным Reuters, инфляция в еврозоне в марте 2024 года составила 2,4 процента, что ниже прогнозов аналитиков. Европейский центральный банк сохранил ставку без изменений на заседании в четверг.";
 
     const queries = buildSearchQueries(text);
-    expect(queries.length).toBeGreaterThanOrEqual(2);
+    expect(queries).toHaveLength(1);
     expect(queries[0].length).toBeLessThanOrEqual(120);
   });
 });

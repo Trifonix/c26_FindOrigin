@@ -75,8 +75,14 @@ export function formatSearchError(error: unknown): string {
     return "Неверный GOOGLE_CSE_ID. Создайте поисковую машину на programmablesearchengine.google.com.";
   }
 
+  if (lower.includes("serper") || lower.includes("serper.dev")) {
+    if (lower.includes("quota") || lower.includes("rate") || lower.includes("limit")) {
+      return "Лимит Serper исчерпан. Проверьте баланс на serper.dev/dashboard или подождите.";
+    }
+  }
+
   if (lower.includes("quota") || lower.includes("rate limit")) {
-    return "Превышена квота Google Search (бесплатно ~100 запросов/день). Попробуйте завтра или увеличьте лимит.";
+    return "Превышена квота Google Custom Search (~100 запросов/день). Используйте SERPER_API_KEY вместо Google.";
   }
 
   if (lower.includes("not configured")) {

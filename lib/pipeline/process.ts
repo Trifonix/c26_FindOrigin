@@ -52,9 +52,10 @@ export async function processUserMessage(chatId: number, rawText: string): Promi
   } catch (error) {
     console.error("Processing failed:", error);
     const raw = error instanceof Error ? error.message : String(error);
-    const searchMsg = formatSearchError(error);
     const aiMsg = formatAIError(error);
-    const message = searchMsg !== raw ? searchMsg : aiMsg !== raw ? aiMsg : raw;
+    const searchMsg = formatSearchError(error);
+    // AI first — "rate limit" from OpenAI was misclassified as Google Search
+    const message = aiMsg !== raw ? aiMsg : searchMsg !== raw ? searchMsg : raw;
     await sendMessage(chatId, message, { disable_web_page_preview: true });
   }
 }
