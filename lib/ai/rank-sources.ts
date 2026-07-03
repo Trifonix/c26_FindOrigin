@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { AI_MODEL, getAIClient } from "@/lib/ai/client";
+import { getAIClient } from "@/lib/ai/client";
+import { getAIModel } from "@/lib/ai/errors";
 import { fetchCandidatesContent } from "@/lib/ai/fetch-content";
 import type { RankedSource, SearchCandidate } from "@/lib/types/search";
 
@@ -46,7 +47,7 @@ Content excerpt: ${content.slice(0, 1500)}`;
     .join("\n\n");
 
   const response = await client.chat.completions.create({
-    model: AI_MODEL,
+    model: getAIModel(),
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },

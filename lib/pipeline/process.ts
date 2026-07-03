@@ -1,3 +1,4 @@
+import { formatAIError } from "@/lib/ai/errors";
 import { rankSources } from "@/lib/ai/rank-sources";
 import { parseInput } from "@/lib/parser/input";
 import { formatSourcesResponse, splitMessage } from "@/lib/pipeline/format-response";
@@ -50,8 +51,11 @@ export async function processUserMessage(chatId: number, rawText: string): Promi
     });
   } catch (error) {
     console.error("Processing failed:", error);
-    const message = formatSearchError(error);
-    await sendMessage(chatId, message);
+    const raw = error instanceof Error ? error.message : String(error);
+    const searchMsg = formatSearchError(error);
+    const aiMsg = formatAIError(error);
+    const message = searchMsg !== raw ? searchMsg : aiMsg !== raw ? aiMsg : raw;
+    await sendMessage(chatId, message, { disable_web_page_preview: true });
   }
 }
 

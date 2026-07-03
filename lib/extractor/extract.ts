@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { z } from "zod";
-import { AI_MODEL, getAIClient } from "@/lib/ai/client";
+import { getAIClient } from "@/lib/ai/client";
+import { getAIModel } from "@/lib/ai/errors";
 import type { ExtractedData } from "@/lib/types";
 
 const extractedSchema = z.object({
@@ -36,7 +37,7 @@ export async function extractEntities(text: string): Promise<ExtractedData> {
   const client = getOpenAIClient();
 
   const response = await client.chat.completions.create({
-    model: AI_MODEL,
+    model: getAIModel(),
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: SYSTEM_PROMPT },

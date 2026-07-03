@@ -1,17 +1,26 @@
 import OpenAI from "openai";
+import { getAIModel } from "@/lib/ai/errors";
 
-export const AI_MODEL = "openai/gpt-4o-mini";
+export const AI_MODEL = getAIModel();
 
 export function getAIClient(): OpenAI {
-  const apiKey = process.env.OPENROUTER_API_KEY ?? process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY or OPENAI_API_KEY is not configured");
-  }
-
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
   const baseURL = process.env.OPENAI_BASE_URL;
 
-  return new OpenAI({
-    apiKey,
-    ...(baseURL ? { baseURL } : {}),
-  });
+  if (openRouterKey) {
+    return new OpenAI({
+      apiKey: openRouterKey,
+      baseURL: baseURL ?? "https://openrouter.ai/api/v1",
+    });
+  }
+
+  if (openaiKey) {
+    return new OpenAI({
+      apiKey: openaiKey,
+      ...(baseURL ? { baseURL } : {}),
+    });
+  }
+
+  throw new Error("OPENROUTER_API_KEY or OPENAI_API_KEY is not configured");
 }
