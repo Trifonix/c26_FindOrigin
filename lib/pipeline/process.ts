@@ -1,6 +1,7 @@
 import { rankSources } from "@/lib/ai/rank-sources";
 import { parseInput } from "@/lib/parser/input";
 import { formatSourcesResponse, splitMessage } from "@/lib/pipeline/format-response";
+import { formatSearchError } from "@/lib/search/errors";
 import { searchSources } from "@/lib/search/google";
 import { sendMessage } from "@/lib/telegram/client";
 import type { NormalizedInput } from "@/lib/types";
@@ -49,9 +50,8 @@ export async function processUserMessage(chatId: number, rawText: string): Promi
     });
   } catch (error) {
     console.error("Processing failed:", error);
-    const message =
-      error instanceof Error ? error.message : "Произошла ошибка при обработке";
-    await sendMessage(chatId, `Ошибка: ${message}`);
+    const message = formatSearchError(error);
+    await sendMessage(chatId, message);
   }
 }
 

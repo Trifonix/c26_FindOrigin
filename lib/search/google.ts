@@ -1,5 +1,6 @@
 import { categorizeUrl, filterCandidates } from "@/lib/search/filter";
 import { buildSearchQueries } from "@/lib/search/queries";
+import { formatSearchError } from "@/lib/search/errors";
 import type { SearchCandidate, SourceSearchResult } from "@/lib/types/search";
 
 interface GoogleSearchItem {
@@ -43,7 +44,8 @@ async function googleSearch(query: string, num = 10): Promise<SearchCandidate[]>
   const data = (await response.json()) as GoogleSearchResponse;
 
   if (!response.ok) {
-    throw new Error(data.error?.message ?? `Google Search API error: ${response.status}`);
+    const raw = data.error?.message ?? `Google Search API error: ${response.status}`;
+    throw new Error(formatSearchError(new Error(raw)));
   }
 
   return (data.items ?? [])
