@@ -1,12 +1,12 @@
 import { processUserMessage } from "@/lib/pipeline/process";
 import type { TelegramUpdate } from "@/lib/types/telegram";
-import { sendMessage } from "@/lib/telegram/client";
+import { getWebAppUrl, sendMessage } from "@/lib/telegram/client";
 import { waitUntil } from "@vercel/functions";
 import { NextRequest, NextResponse } from "next/server";
 
 const START_MESSAGE = `Привет! Я FindOrigin — помогаю найти источник информации.
 
-Пришлите текст новости или ссылку на Telegram-пост (минимум 20 символов), и я попробую найти первоисточник.`;
+Пришлите текст новости или ссылку на Telegram-пост (минимум 20 символов), или откройте Mini App 👇`;
 
 function verifyWebhookSecret(request: NextRequest): boolean {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -39,9 +39,30 @@ export async function handleTelegramWebhook(request: NextRequest): Promise<NextR
 
   if (text === "/start") {
     waitUntil(
-      sendMessage(chatId, START_MESSAGE).catch((err) =>
-        console.error("Failed to send start message:", err),
-      ),
+      (async () => {
+        try {
+          let webAppUrl: string | null = null;
+          try {
+            webAppUrl = getWebAppUrl();
+          } catch {
+            webAppUrl = null;
+          }
+
+          if (webAppUrl) {
+            await sendMessage(chatId, START_MESSAGE, {
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: "🔍 Открыть FindOrigin", web_app: { url: webAppUrl } }],
+                ],
+              },
+            });
+          } else {
+            await sendMessage(chatId, START_MESSAGE);
+          }
+        } catch (err) {
+          console.error("Failed to send start message:", err);
+        }
+      })(),
     );
     return NextResponse.json({ ok: true });
   }

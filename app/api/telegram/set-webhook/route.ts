@@ -1,4 +1,4 @@
-import { getWebhookInfo, setWebhook } from "@/lib/telegram/client";
+import { getWebhookInfo, setChatMenuButton, setWebhook } from "@/lib/telegram/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -11,17 +11,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const origin = request.nextUrl.origin;
   const webhookUrl =
-    process.env.WEBHOOK_URL ?? `${request.nextUrl.origin}/api/webhook`;
+    process.env.WEBHOOK_URL ?? `${origin}/api/webhook`;
+  const webAppUrl =
+    process.env.WEBAPP_URL ?? `${origin}/mini-app`;
 
   try {
     const result = await setWebhook(webhookUrl, process.env.TELEGRAM_WEBHOOK_SECRET);
+    const menuResult = await setChatMenuButton(webAppUrl);
     const info = await getWebhookInfo();
 
     return NextResponse.json({
       ok: true,
       webhookUrl,
+      webAppUrl,
       setWebhook: result,
+      setChatMenuButton: menuResult,
       webhookInfo: info,
     });
   } catch (error) {

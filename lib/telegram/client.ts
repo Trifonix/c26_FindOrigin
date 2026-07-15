@@ -2,6 +2,12 @@ import type { SendMessageOptions } from "@/lib/types/telegram";
 
 const TELEGRAM_API = "https://api.telegram.org";
 
+export interface InlineKeyboardButton {
+  text: string;
+  web_app?: { url: string };
+  url?: string;
+}
+
 function getBotToken(): string {
   const token = process.env.BOT_TOKEN;
   if (!token) {
@@ -10,10 +16,25 @@ function getBotToken(): string {
   return token;
 }
 
+export function getWebAppUrl(): string {
+  if (process.env.WEBAPP_URL) {
+    return process.env.WEBAPP_URL;
+  }
+
+  if (process.env.WEBHOOK_URL) {
+    const origin = new URL(process.env.WEBHOOK_URL).origin;
+    return `${origin}/mini-app`;
+  }
+
+  throw new Error("WEBAPP_URL or WEBHOOK_URL is not configured");
+}
+
 export async function sendMessage(
   chatId: number,
   text: string,
-  options: SendMessageOptions = {},
+  options: SendMessageOptions & {
+    reply_markup?: { inline_keyboard: InlineKeyboardButton[][] };
+  } = {},
 ): Promise<void> {
   const token = getBotToken();
   const response = await fetch(`${TELEGRAM_API}/bot${token}/sendMessage`, {
@@ -60,4 +81,27 @@ export async function getWebhookInfo(): Promise<unknown> {
   const token = getBotToken();
   const response = await fetch(`${TELEGRAM_API}/bot${token}/getWebhookInfo`);
   return response.json();
+}
+
+export async function setChatMenuButton(webAppUrl: string): Promise<unknown> {
+  const token = getBotToken();
+  const response = await fetch(`${TELEGRAM_API}/bot${token}/setChatMenuButton`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      menu_button: {
+        type: "web_app",
+        text: "FindOrigin",
+        web_app: { url: webAppUrl },
+      },
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.ok) {
+    throw new Error(`setChatMenuButton failed: ${JSON.stringify(data)}`);
+  }
+
+  return data;
 }

@@ -5,8 +5,14 @@ export default function Home() {
       <p className="mt-4 text-gray-600">
         Telegram-бот для поиска источников информации.
       </p>
-      <p className="mt-2 text-sm text-gray-400">
-        Webhook: <code>/api/webhook</code>
+      <a
+        href="/mini-app"
+        className="mt-6 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white"
+      >
+        Открыть Mini App
+      </a>
+      <p className="mt-4 text-sm text-gray-400">
+        Webhook: <code>/api/webhook</code> · Mini App: <code>/mini-app</code>
       </p>
     </main>
   );

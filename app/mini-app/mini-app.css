@@ -1,0 +1,234 @@
+.tma-body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--tg-theme-bg-color, #f4f4f5);
+  color: var(--tg-theme-text-color, #111827);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tma-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 16px 32px;
+}
+
+.tma-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tma-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--tg-theme-button-color, #2563eb);
+  color: var(--tg-theme-button-text-color, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.tma-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tma-subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--tg-theme-hint-color, #6b7280);
+}
+
+.tma-banner {
+  background: var(--tg-theme-secondary-bg-color, #e5e7eb);
+  color: var(--tg-theme-hint-color, #6b7280);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.tma-card {
+  background: var(--tg-theme-secondary-bg-color, #fff);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.tma-card-error {
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.tma-card-empty {
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #6b7280);
+}
+
+.tma-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.tma-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 120px;
+  background: var(--tg-theme-bg-color, #f9fafb);
+  color: var(--tg-theme-text-color, #111827);
+  font-family: inherit;
+}
+
+.tma-textarea:focus {
+  outline: 2px solid var(--tg-theme-button-color, #2563eb);
+  outline-offset: 1px;
+}
+
+.tma-textarea:disabled {
+  opacity: 0.6;
+}
+
+.tma-hint {
+  margin: 6px 0 14px;
+  font-size: 12px;
+  color: var(--tg-theme-hint-color, #9ca3af);
+}
+
+.tma-button {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--tg-theme-button-color, #2563eb);
+  color: var(--tg-theme-button-text-color, #fff);
+  transition: opacity 0.15s;
+}
+
+.tma-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.tma-loading {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--tg-theme-hint-color, #6b7280);
+  font-size: 14px;
+}
+
+.tma-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--tg-theme-hint-color, #d1d5db);
+  border-top-color: var(--tg-theme-button-color, #2563eb);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: tma-spin 0.8s linear infinite;
+}
+
+@keyframes tma-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tma-results-title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.tma-query-preview {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--tg-theme-hint-color, #6b7280);
+  line-height: 1.4;
+}
+
+.tma-source-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tma-source-card {
+  background: var(--tg-theme-secondary-bg-color, #fff);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.tma-source-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tma-source-index {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--tg-theme-button-color, #2563eb);
+  color: var(--tg-theme-button-text-color, #fff);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tma-confidence {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tma-source-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tg-theme-link-color, var(--tg-theme-button-color, #2563eb));
+  cursor: pointer;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.tma-source-reason {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--tg-theme-hint-color, #6b7280);
+}
+
+:root {
+  --tma-success: #16a34a;
+  --tma-warning: #d97706;
+  --tma-muted: #9ca3af;
+}
